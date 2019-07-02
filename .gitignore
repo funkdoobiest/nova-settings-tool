@@ -6,3 +6,4 @@
 notes.md
 composer.lock
 package-lock.json
+/.idea

@@ -19,7 +19,7 @@ class SettingsToolController extends Controller
      */
     public function __construct(string $settingsPath = null)
     {
-        $this->settingsPath = $settingsPath ?? storage_path(config('settings.path', 'app/settings.json'));
+        $this->settingsPath = $settingsPath ?? config('settings.path', storage_path('app/settings.json'));
     }
 
     /**
