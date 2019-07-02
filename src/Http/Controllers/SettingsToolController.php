@@ -5,6 +5,7 @@ namespace Bakerkretzmar\SettingsTool\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Valuestore\Valuestore;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Cache;
 
 class SettingsToolController extends Controller
 {
@@ -59,6 +60,8 @@ class SettingsToolController extends Controller
         foreach ($request->settings as $setting => $value) {
             $settings->put($setting, $value);
         }
+
+        Cache::tags(config('settings.cache_tag'))->flush();
 
         return response($settings->all(), 202);
     }
