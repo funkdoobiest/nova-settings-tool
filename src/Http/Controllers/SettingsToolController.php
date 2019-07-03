@@ -61,7 +61,7 @@ class SettingsToolController extends Controller
             $settings->put($setting, $value);
         }
 
-        Cache::tags(config('settings.cache_tag'))->flush();
+        Cache::forget(config('settings.cache_key'));
 
         return response($settings->all(), 202);
     }
