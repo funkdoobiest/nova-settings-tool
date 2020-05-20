@@ -19,8 +19,6 @@ class SettingsToolController
 
     public function read()
     {
-        $values = $this->store->all();
-
         $settings = collect(config('nova-settings-tool.settings'));
 
         $panels = $settings->where('panel', '!=', null)->pluck('panel')->unique()
@@ -33,11 +31,18 @@ class SettingsToolController
             ->all();
 
         $settings = $settings->map(function ($setting) use ($values) {
+
+            $value = settings($setting['key'], null);
+
+            if($setting['type'] == 'toggle') {
+                $value = $value == 1;
+            }
+
             return array_merge([
-                    'type' => 'text',
-                    'label' => ucfirst($setting['key']),
-                    'value' => $values[$setting['key']] ?? null,
-                ], $setting);
+                'type' => 'text',
+                'label' => ucfirst($setting['key']),
+                'value' => $value,
+            ], $setting);
         })
             ->keyBy('key')
             ->all();
@@ -48,10 +53,10 @@ class SettingsToolController
     public function write(Request $request)
     {
         foreach ($request->all() as $key => $value) {
-            $this->store->put($key, $value);
+            settings([$key => $value]);
         }
 
-	    Cache::forget(config('settings.cache_key'));
+        settings()->save();
 
         return response()->json();
     }
